@@ -1,5 +1,5 @@
 {
-  "name": "goit-node-js",
+  "name": "goit-node",
   "version": "1.0.0",
   "description": "goit-node-js",
   "type": "module",
@@ -24,5 +24,8 @@
     "eslint": "^9.17.0",
     "globals": "^15.14.0",
     "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
   }
 }
