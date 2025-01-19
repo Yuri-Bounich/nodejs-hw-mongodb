@@ -1,18 +1,14 @@
-import express from 'express';
+import { initMongoDB } from './db/initMongoConnection.js';
+import { setupServer } from './server.js';
 
-const app = express();
+const bootstrap = async () => {
+  try {
+    await initMongoDB();
+    setupServer(); // Запускається тільки після підключення до бази
+  } catch (error) {
+    console.error('Failed to initialize application:', error.message);
+    process.exit(1); // Завершити процес у разі невдачі
+  }
+};
 
-const PORT = 3000;
-
-// app.get('/', (req, res) => {
-//   res.json({ Message: 'Hello world!' });
-// });
-
-app.use((req, res, next) => {
-  console.log(`Time: ${new Date().toLocaleString()}`);
-  next();
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+bootstrap();
