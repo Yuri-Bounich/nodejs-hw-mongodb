@@ -6,17 +6,20 @@ import {
   getContactByIdController,
   deleteContactByIdController,
   createContactController,
+  patchContactController,
 } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
-const router = Router();
+const contactsRouter = Router();
 
-router.get('/contacts', ctrlWrapper(getContactsController));
+contactsRouter.get('/', ctrlWrapper(getContactsController));
 
-router.get('/contacts/:contactId', ctrlWrapper(getContactByIdController));
+contactsRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
 
-router.post('/contacts', ctrlWrapper(createContactController));
+contactsRouter.post('/', ctrlWrapper(createContactController));
 
-router.delete('/contacts/:contactId', ctrlWrapper(deleteContactByIdController));
+contactsRouter.patch('/:contactId', ctrlWrapper(patchContactController));
 
-export default router;
+contactsRouter.delete('/:contactId', ctrlWrapper(deleteContactByIdController));
+
+export default contactsRouter;
