@@ -3,8 +3,8 @@ import cors from 'cors';
 import pino from 'pino-http';
 import { getEnvVar } from './utils/getEnvVar.js';
 import router from './routers/index.js';
-import { notFoundHandler } from './controllers/middlewares/notFoundHandler.js';
-import { errorHandler } from './controllers/middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 const PORT = Number(getEnvVar('PORT', 3000));
 
