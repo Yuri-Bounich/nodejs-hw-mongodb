@@ -9,6 +9,8 @@ import {
   patchContactController,
 } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import { createContactValidationSchema } from '../validation/createContactValidationSchema.js';
 
 const contactsRouter = Router();
 
@@ -16,7 +18,11 @@ contactsRouter.get('/', ctrlWrapper(getContactsController));
 
 contactsRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
 
-contactsRouter.post('/', ctrlWrapper(createContactController));
+contactsRouter.post(
+  '/',
+  validateBody(createContactValidationSchema),
+  ctrlWrapper(createContactController),
+);
 
 contactsRouter.patch('/:contactId', ctrlWrapper(patchContactController));
 

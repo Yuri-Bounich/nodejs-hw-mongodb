@@ -44,25 +44,7 @@ export const getContactByIdController = async (req, res, next) => {
 };
 
 export const createContactController = async (req, res) => {
-  const { name, phoneNumber, contactType, email, isFavourite } = req.body;
-
-  // Валідація обов'язкових полів
-  if (!name) {
-    throw createHttpError(400, "Field 'name' is required");
-  }
-  if (!phoneNumber) {
-    throw createHttpError(400, "Field 'phoneNumber' is required");
-  }
-  if (!contactType) {
-    throw createHttpError(400, "Field 'contactType' is required");
-  }
-  const contact = await createContact({
-    name,
-    phoneNumber,
-    contactType,
-    email,
-    isFavourite,
-  });
+  const contact = await createContact(req.body);
 
   res.status(201).json({
     status: 201,
