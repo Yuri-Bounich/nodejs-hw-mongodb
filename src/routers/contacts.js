@@ -12,10 +12,12 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { createContactValidationSchema } from '../validation/createContactValidationSchema.js';
 import { updateContactValidationSchema } from '../validation/updateContactValidationSchema';
+import { isValidId } from '../middlewares/isValidId.js';
 
 const contactsRouter = Router();
 
-contactsRouter.get('/', ctrlWrapper(getContactsController));
+contactsRouter.use('/:contactId', isValidId('contactId')),
+  contactsRouter.get('/', ctrlWrapper(getContactsController));
 
 contactsRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
 
