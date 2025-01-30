@@ -8,5 +8,5 @@ export const createContactValidationSchema = Joi.object({
   isFavourite: Joi.boolean().default(false),
   contactType: Joi.string()
     .valid(...Object.values(CONTACTTYPE))
-    .default('personal'),
+    .required(),
 });

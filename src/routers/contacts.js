@@ -11,6 +11,7 @@ import {
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { createContactValidationSchema } from '../validation/createContactValidationSchema.js';
+import { updateContactValidationSchema } from '../validation/updateContactValidationSchema';
 
 const contactsRouter = Router();
 
@@ -24,7 +25,11 @@ contactsRouter.post(
   ctrlWrapper(createContactController),
 );
 
-contactsRouter.patch('/:contactId', ctrlWrapper(patchContactController));
+contactsRouter.patch(
+  '/:contactId',
+  validateBody(updateContactValidationSchema),
+  ctrlWrapper(patchContactController),
+);
 
 contactsRouter.delete('/:contactId', ctrlWrapper(deleteContactByIdController));
 
