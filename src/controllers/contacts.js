@@ -7,9 +7,13 @@ import {
   updatedContacts,
 } from '../services/contacts.js';
 import mongoose from 'mongoose';
+import { parsePaginationsParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
 
 export const getContactsController = async (req, res, next) => {
-  const contacts = await getAllContacts();
+  const { page, perPage } = parsePaginationsParams(req.query);
+  const { sortOrder, sortBy } = parseSortParams(req.query);
+  const contacts = await getAllContacts({ page, perPage, sortOrder, sortBy });
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
@@ -45,7 +49,6 @@ export const getContactByIdController = async (req, res, next) => {
 
 export const createContactController = async (req, res) => {
   const contact = await createContact(req.body);
-  // console.log('Request body:', req.body);
 
   res.status(201).json({
     status: 201,
