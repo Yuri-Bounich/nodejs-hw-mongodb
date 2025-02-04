@@ -9,9 +9,18 @@ export const validateBody = (schema) => async (req, res, next) => {
     });
     next();
   } catch (err) {
-    const error = createHttpError(400, 'Bad Request', {
-      errors: err.details,
-    });
-    next(error);
+    if (err.isJoi) {
+      next(
+        createHttpError(400, {
+          message: 'Validation error',
+          errors: err.details.map((detail) => ({
+            message: detail.message,
+            path: detail.path.join('.'), // Масив у рядок (якщо потрібно)
+          })),
+        }),
+      );
+    } else {
+      next(err);
+    }
   }
 };
