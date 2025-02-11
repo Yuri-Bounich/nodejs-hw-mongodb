@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 import { CONTACTTYPE } from '../../constans/type.js';
 
 const contactsSchema = new Schema(
@@ -13,6 +13,7 @@ const contactsSchema = new Schema(
       required: true,
       default: 'personal',
     },
+    userId: { type: Types.ObjectId, ref: 'user', required: false },
   },
   { timestamps: true, versionKey: false },
 );

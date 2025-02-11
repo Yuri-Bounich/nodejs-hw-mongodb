@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { userCollections } from './user';
+import { userCollections } from './user.js';
 
 const sessionSchema = new Schema(
   {
@@ -17,4 +17,4 @@ const sessionSchema = new Schema(
   { timestamps: true, versionKey: false },
 );
 
-export const sessionCollections = model('user', sessionSchema);
+export const sessionCollections = model('session', sessionSchema);

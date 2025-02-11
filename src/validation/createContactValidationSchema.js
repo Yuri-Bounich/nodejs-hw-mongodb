@@ -33,4 +33,7 @@ export const createContactValidationSchema = Joi.object({
       ).join(', ')}`,
       'any.required': 'contactType is a required field',
     }),
+  userId: Joi.string().messages({
+    'string.empty': 'userId cannot be empty',
+  }),
 });
