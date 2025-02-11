@@ -13,7 +13,15 @@ import { parseSortParams } from '../utils/parseSortParams.js';
 export const getContactsController = async (req, res, next) => {
   const { page, perPage } = parsePaginationsParams(req.query);
   const { sortOrder, sortBy } = parseSortParams(req.query);
-  const contacts = await getAllContacts({ page, perPage, sortOrder, sortBy });
+  const userId = req.user._id;
+
+  const contacts = await getAllContacts({
+    userId,
+    page,
+    perPage,
+    sortOrder,
+    sortBy,
+  });
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
@@ -23,6 +31,8 @@ export const getContactsController = async (req, res, next) => {
 
 export const getContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
+  const userId = req.user._id;
+
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     return res.status(404).json({
       status: 404,
@@ -30,7 +40,8 @@ export const getContactByIdController = async (req, res, next) => {
       data: null,
     });
   }
-  const contact = await getContactById(contactId);
+
+  const contact = await getContactById(userId, contactId);
 
   if (!contact) {
     return res.status(404).json({
@@ -48,7 +59,13 @@ export const getContactByIdController = async (req, res, next) => {
 };
 
 export const createContactController = async (req, res) => {
-  const contact = await createContact({ ...req.body, userId: req.user._id });
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw createHttpError(400, 'User is not authenticated');
+  }
+
+  const contact = await createContact({ ...req.body, userId });
 
   res.status(201).json({
     status: 201,
@@ -60,12 +77,13 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
   const { body } = req;
+  const userId = req.user._id;
 
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     throw createHttpError(404, 'Contact not found');
   }
 
-  const contact = await updatedContacts(contactId, body);
+  const contact = await updatedContacts(userId, contactId, body);
 
   res.json({
     status: 200,
@@ -76,11 +94,12 @@ export const patchContactController = async (req, res) => {
 
 export const deleteContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
+  const userId = req.user._id;
 
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     throw createHttpError(404, 'Contact not found');
   }
-  const contact = await deleteContactById(contactId);
+  const contact = await deleteContactById(userId, contactId);
 
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
