@@ -7,6 +7,9 @@ import {
   ACCESS_TOKEN_LIVE_TIME,
   REFRESH_TOKEN_LIVE_TIME,
 } from '../constans/time.js';
+import { sendEmail } from '../utils/sendEmail.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { ENV_VARS } from '../constans/env.js';
 
 const createSession = () => ({
   accessToken: crypto.randomBytes(20).toString('base64'),
@@ -86,5 +89,19 @@ export const logoutUser = async ({ sessionToken, sessionId }) => {
   await sessionCollections.deleteOne({
     refreshToken: sessionToken,
     _id: sessionId,
+  });
+};
+
+export const sendResetEmail = async (email) => {
+  const user = await userCollections.findOne({ email });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+  await sendEmail({
+    to: email,
+    from: getEnvVar(ENV_VARS.SMTP_FROM),
+    subject: 'Reset password',
+    html: '<h1>Hello world!</h1>',
   });
 };
