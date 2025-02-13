@@ -14,7 +14,7 @@ const transport = nodemailer.createTransport({
 
 export const sendEmail = async (options) => {
   try {
-    console.log('Sending email with options:', options);
+    // console.log('Sending email with options:', options);
     return await transport.sendMail({
       from: options.from,
       to: options.to,

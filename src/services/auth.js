@@ -10,6 +10,7 @@ import {
 import { sendEmail } from '../utils/sendEmail.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { ENV_VARS } from '../constans/env.js';
+import jwt from 'jsomwebtoken';
 
 const createSession = () => ({
   accessToken: crypto.randomBytes(20).toString('base64'),
@@ -98,10 +99,20 @@ export const sendResetEmail = async (email) => {
   if (!user) {
     throw createHttpError(404, 'User not found!');
   }
+
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email,
+    },
+    getEnvVar('JWT_SECRET'),
+    { expiresIn: '5m' },
+  );
+
   await sendEmail({
     to: email,
     from: getEnvVar(ENV_VARS.SMTP_FROM),
     subject: 'Reset password',
-    html: '<h1>Hello world!</h1>',
+    html: `<p>Click <a href = "${resetToken}">here</a> to reset your password!</p>`,
   });
 };

@@ -33,6 +33,7 @@ authRouter.post(
   validateBody(sendResetEmailValidationSchema),
   ctrlWrapper(sendResetEmailController),
 );
+
 authRouter.post('/reset-password', ctrlWrapper(resetRasswordController));
 
 export default authRouter;
