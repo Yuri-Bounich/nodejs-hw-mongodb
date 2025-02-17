@@ -3,6 +3,7 @@ import {
   logoutUser,
   refreshSession,
   registerUser,
+  resetPassword,
   sendResetEmail,
 } from '../services/auth.js';
 import { serializedUser } from '../utils/serislizeUser.js';
@@ -80,4 +81,13 @@ export const sendResetEmailController = async (req, res) => {
     data: {},
   });
 };
-export const resetRasswordController = async (req, res) => {};
+
+export const resetPasswordController = async (req, res) => {
+  await resetPassword(req.body);
+
+  res.json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
+};

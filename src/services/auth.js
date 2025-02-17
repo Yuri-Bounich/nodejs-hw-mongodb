@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+import Handlebars from 'handlebars';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { userCollections } from '../db/models/user.js';
@@ -10,7 +11,18 @@ import {
 import { sendEmail } from '../utils/sendEmail.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { ENV_VARS } from '../constans/env.js';
-import jwt from 'jsomwebtoken';
+import jwt from 'jsonwebtoken';
+import fs from 'node:fs';
+import { TEMPLATES_DIR_PATH } from '../constans/path.js';
+import path from 'node:path';
+
+const templatePath = path.join(TEMPLATES_DIR_PATH, 'reset-password-email.html');
+
+if (!fs.existsSync(templatePath)) {
+  throw new Error(`Template not found: ${templatePath}`);
+}
+
+const resetEmailTemplate = fs.readFileSync(templatePath).toString();
 
 const createSession = () => ({
   accessToken: crypto.randomBytes(20).toString('base64'),
@@ -105,14 +117,43 @@ export const sendResetEmail = async (email) => {
       sub: user._id,
       email,
     },
-    getEnvVar('JWT_SECRET'),
+    getEnvVar(ENV_VARS.JWT_SECRET),
     { expiresIn: '5m' },
   );
+
+  const resetPasswordLink = `${getEnvVar(
+    ENV_VARS.APP_DOMAIN,
+  )}/reset-password?token=${resetToken}`;
+
+  const template = Handlebars.compile(resetEmailTemplate);
+
+  const html = template({ link: resetPasswordLink });
 
   await sendEmail({
     to: email,
     from: getEnvVar(ENV_VARS.SMTP_FROM),
     subject: 'Reset password',
-    html: `<p>Click <a href = "${resetToken}">here</a> to reset your password!</p>`,
+    html,
+  });
+};
+
+export const resetPassword = async ({ password, token }) => {
+  let payload;
+  try {
+    payload = jwt.verify(token, getEnvVar(ENV_VARS.JWT_SECRET));
+  } catch (err) {
+    console.error(err.message);
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+  const user = await userCollections.findById(payload.sub);
+
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await userCollections.findByIdAndUpdate(user._id, {
+    password: hashedPassword,
   });
 };
