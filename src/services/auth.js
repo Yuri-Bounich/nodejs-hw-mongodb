@@ -129,16 +129,31 @@ export const sendResetEmail = async (email) => {
 
   const html = template({ link: resetPasswordLink });
 
-  await sendEmail({
-    to: email,
-    from: getEnvVar(ENV_VARS.SMTP_FROM),
-    subject: 'Reset password',
-    html,
-  });
+  try {
+    await sendEmail({
+      to: email,
+      from: getEnvVar(ENV_VARS.SMTP_FROM),
+      subject: 'Reset password',
+      html,
+    });
+
+    return {
+      status: 200,
+      message: 'Reset password email has been successfully sent.',
+      data: {},
+    };
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
 };
 
 export const resetPassword = async ({ password, token }) => {
   let payload;
+  console.log('Current JWT_SECRET:', getEnvVar(ENV_VARS.JWT_SECRET));
   try {
     payload = jwt.verify(token, getEnvVar(ENV_VARS.JWT_SECRET));
   } catch (err) {
