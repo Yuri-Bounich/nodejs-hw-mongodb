@@ -1,4 +1,5 @@
 import { contactsCollections } from '../db/models/contacts.js';
+import { saveFile } from '../utils/saveFile.js';
 
 const createPaginationsMetadata = (page, perPage, count) => {
   const totalPages = Math.ceil(count / perPage);
@@ -50,10 +51,21 @@ export const createContact = async (payload) => {
   return contact;
 };
 
-export const updatedContacts = async (userId, contactId, payload) => {
+export const updatedContacts = async (
+  userId,
+  contactId,
+  { photo, ...payload },
+) => {
+  let photoUrl;
+  if (photo) {
+    photoUrl = await saveFile(photo);
+  }
   const contact = await contactsCollections.findByIdAndUpdate(
     { userId, _id: contactId },
-    payload,
+    {
+      ...payload,
+      ...(photoUrl ? { photoUrl } : {}),
+    },
     { new: true },
   );
   return contact;

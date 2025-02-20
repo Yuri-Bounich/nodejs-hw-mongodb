@@ -6,13 +6,22 @@ import { getEnvVar } from './utils/getEnvVar.js';
 import router from './routers/index.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { UPLOADS_DIR_PATH } from './constans/path.js';
 
 const PORT = Number(getEnvVar('PORT', 3000));
 
 export const setupServer = () => {
   const app = express();
 
-  app.use(express.json());
+  app.use(
+    express.json({
+      type: ['application/json', 'application/vnd.api+json'],
+      limit: '100kb',
+    }),
+  );
+
+  app.use('/uploads', express.static(UPLOADS_DIR_PATH));
+
   app.use(cors());
   app.use(cookieParser());
 

@@ -6,6 +6,9 @@
 .DS_Store
 .idea
 
+/temp/**
+/uploads/**
+
 
 
 mongodb+srv://b52ybunich:Eo2Osf1xRgALf06G@cluster0.u8s5s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

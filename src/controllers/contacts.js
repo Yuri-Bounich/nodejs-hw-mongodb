@@ -77,13 +77,14 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
   const { body } = req;
+  const photo = req.file;
   const userId = req.user._id;
 
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     throw createHttpError(404, 'Contact not found');
   }
 
-  const contact = await updatedContacts(userId, contactId, body);
+  const contact = await updatedContacts(userId, contactId, { ...body, photo });
 
   res.json({
     status: 200,
