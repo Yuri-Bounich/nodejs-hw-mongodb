@@ -36,4 +36,7 @@ export const createContactValidationSchema = Joi.object({
   userId: Joi.string().messages({
     'string.empty': 'userId cannot be empty',
   }),
+  photo: Joi.string().uri().messages({
+    'string.uri': 'Photo should be a valid URL',
+  }),
 });

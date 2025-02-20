@@ -32,4 +32,7 @@ export const updateContactValidationSchema = Joi.object({
       ).join(', ')}`,
       'any.required': 'contactType is a required field',
     }),
+  photo: Joi.string().uri().messages({
+    'string.uri': 'Photo should be a valid URL',
+  }),
 });

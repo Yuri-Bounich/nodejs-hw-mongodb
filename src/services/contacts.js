@@ -64,7 +64,7 @@ export const updatedContacts = async (
     { userId, _id: contactId },
     {
       ...payload,
-      ...(photoUrl ? { photoUrl } : {}),
+      ...(photoUrl ? { photo: photoUrl } : {}),
     },
     { new: true },
   );

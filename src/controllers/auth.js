@@ -4,6 +4,7 @@ import {
   refreshSession,
   registerUser,
   resetPassword,
+  resetPwd,
   sendResetEmail,
 } from '../services/auth.js';
 import { serializedUser } from '../utils/serislizeUser.js';
@@ -90,4 +91,18 @@ export const resetPasswordController = async (req, res) => {
     message: 'Reset password email has been successfully sent.',
     data: {},
   });
+};
+
+export const resetPwdController = async (req, res, next) => {
+  try {
+    await resetPwd(req.body);
+
+    res.json({
+      status: 200,
+      message: 'Password has been successfully reset.',
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
 };

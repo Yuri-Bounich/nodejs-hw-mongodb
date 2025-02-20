@@ -172,3 +172,25 @@ export const resetPassword = async ({ password, token }) => {
     password: hashedPassword,
   });
 };
+
+export const resetPwd = async ({ password, token }) => {
+  let payload;
+  try {
+    payload = jwt.verify(token, getEnvVar(ENV_VARS.JWT_SECRET));
+  } catch (err) {
+    console.error('JWT verification error:', err.message);
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+  const user = await userCollections.findById(payload.sub);
+
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await userCollections.findByIdAndUpdate(user._id, {
+    password: hashedPassword,
+  });
+  await sessionCollections.deleteMany({ userId: user._id });
+};
