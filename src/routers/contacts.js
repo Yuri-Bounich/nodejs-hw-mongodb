@@ -19,8 +19,8 @@ import { upload } from '../middlewares/multer.js';
 const contactsRouter = Router();
 contactsRouter.use('/', authenticate);
 
-contactsRouter.use('/:contactId', isValidId('contactId')),
-  contactsRouter.get('/', ctrlWrapper(getContactsController));
+contactsRouter.use('/:contactId', isValidId('contactId'));
+contactsRouter.get('/', ctrlWrapper(getContactsController));
 
 contactsRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
 
