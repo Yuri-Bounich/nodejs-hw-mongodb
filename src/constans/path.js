@@ -1,4 +1,4 @@
-import path from 'node:path';
+import path from 'path';
 
 export const TEMPLATES_DIR_PATH = path.join(process.cwd(), 'src', 'templates');
 export const TEMP_DIR_PATH = path.join(process.cwd(), 'temp');

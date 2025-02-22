@@ -1,12 +1,12 @@
 import { TEMP_DIR_PATH, UPLOADS_DIR_PATH } from './constans/path.js';
 import { initMongoDB } from './db/initMongoConnection.js';
 import { setupServer } from './server.js';
-import { createDirIfNotExsists } from './utils/createDirIfNotExsists.js';
+import { createDirIfNotExists } from './utils/createDirIfNotExists.js';
 
 const bootstrap = async () => {
   try {
-    await createDirIfNotExsists(TEMP_DIR_PATH);
-    await createDirIfNotExsists(UPLOADS_DIR_PATH);
+    await createDirIfNotExists(TEMP_DIR_PATH);
+    await createDirIfNotExists(UPLOADS_DIR_PATH);
     await initMongoDB();
     await setupServer(); // Запускається тільки після підключення до бази
   } catch (error) {
