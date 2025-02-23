@@ -12,6 +12,8 @@ export const authenticate = async (req, res, next) => {
     }
 
     const [bearer, token] = authHeader.split(' ');
+
+    // Перевірка формату Authorization
     if (bearer !== 'Bearer') {
       return next(
         new createHttpError(401, 'Authorization should be of Bearer type'),
@@ -22,24 +24,28 @@ export const authenticate = async (req, res, next) => {
       return next(new createHttpError(401, 'No Access token provided'));
     }
 
+    // Перевірка наявності сесії
     const session = await sessionCollections.findOne({ accessToken: token });
     if (!session) {
       return next(new createHttpError(401, 'No active session found'));
     }
 
+    // Перевірка терміну дії токену
     if (session.accessTokenValidUntil < new Date()) {
       return next(new createHttpError(401, 'Access token expired'));
     }
 
     const user = await userCollections.findById(session.userId);
     if (!user) {
+      // Якщо користувача немає, видаляємо сесію
       await sessionCollections.findByIdAndDelete(session._id);
       return next(new createHttpError(401, 'No user found for such session'));
     }
 
+    // Додаємо користувача до запиту
     req.user = user;
 
-    next();
+    next(); // Перехід до наступного middleware
   } catch (err) {
     console.error('Authentication error:', err);
     next(new createHttpError(500, 'Internal Server Error'));

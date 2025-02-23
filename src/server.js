@@ -1,4 +1,4 @@
-import express, { json } from 'express';
+import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import pino from 'pino-http';
@@ -13,6 +13,16 @@ const PORT = Number(getEnvVar('PORT', 3000));
 export const setupServer = () => {
   const app = express();
 
+  // Логування запитів (перед іншими middleware)
+  app.use(
+    pino({
+      transport: {
+        target: 'pino-pretty', // Виведення логів в "зручному" форматі
+      },
+    }),
+  );
+
+  // Middleware для парсингу JSON
   app.use(
     express.json({
       type: ['application/json', 'application/vnd.api+json'],
@@ -20,27 +30,29 @@ export const setupServer = () => {
     }),
   );
 
+  // Статичні файли для папки uploads
   app.use('/uploads', express.static(UPLOADS_DIR_PATH));
 
+  // Middleware для CORS, cookie-parser та JSON
   app.use(cors());
   app.use(cookieParser());
 
-  app.use(json());
+  // Додавання кореневого маршруту
+  app.get('/', (req, res) => {
+    console.log('GET / запит отримано');
+    res.send('Server is running');
+  });
 
-  app.use(
-    pino({
-      transport: {
-        target: 'pino-pretty',
-      },
-    }),
-  );
-
+  // Всі інші маршрути (контролери)
   app.use(router);
 
+  // Обробка помилок для неіснуючих маршрутів
   app.use('*', notFoundHandler);
 
+  // Глобальний обробник помилок
   app.use(errorHandler);
 
+  // Запуск сервера
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
