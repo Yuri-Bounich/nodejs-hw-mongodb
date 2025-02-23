@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+import mongoose from 'mongoose';
 import { sessionCollections } from '../db/models/sessions.js';
 import { userCollections } from '../db/models/user.js';
 
@@ -11,18 +12,18 @@ export const authenticate = async (req, res, next) => {
       );
     }
 
-    const [bearer, token] = authHeader.split(' ');
+    const [bearer, token] = (authHeader || '').split(' ');
 
     // Перевірка формату Authorization
-    if (bearer !== 'Bearer') {
+    if (!bearer || !token || bearer.toLowerCase() !== 'bearer') {
       return next(
         new createHttpError(401, 'Authorization should be of Bearer type'),
       );
     }
 
-    if (!token) {
-      return next(new createHttpError(401, 'No Access token provided'));
-    }
+    // if (!token) {
+    //   return next(new createHttpError(401, 'No Access token provided'));
+    // }
 
     // Перевірка наявності сесії
     const session = await sessionCollections.findOne({ accessToken: token });
@@ -31,8 +32,14 @@ export const authenticate = async (req, res, next) => {
     }
 
     // Перевірка терміну дії токену
-    if (session.accessTokenValidUntil < new Date()) {
+    if (new Date(session.accessTokenValidUntil) < new Date()) {
       return next(new createHttpError(401, 'Access token expired'));
+    }
+
+    // Перевірка валідності ObjectId
+    if (!mongoose.Types.ObjectId.isValid(session.userId)) {
+      await sessionCollections.findByIdAndDelete(session._id);
+      return next(new createHttpError(401, 'Invalid user ID in session'));
     }
 
     const user = await userCollections.findById(session.userId);
