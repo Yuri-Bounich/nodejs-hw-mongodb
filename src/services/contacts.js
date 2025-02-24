@@ -46,8 +46,18 @@ export const getContactById = async (userId, contactId) => {
   return contact;
 };
 
-export const createContact = async (payload) => {
-  const contact = await contactsCollections.create(payload);
+export const createContact = async (payload, photo) => {
+  let photoUrl;
+  if (photo) {
+    // Зберігаємо файл і отримуємо його шлях
+    photoUrl = await saveFile(photo);
+  }
+  console.log('Saved photo path:', photoUrl); // Логуємо шлях до фото
+  // Додаємо шлях до фото у payload
+  const contact = await contactsCollections.create({
+    ...payload, // Це будуть всі дані контакту
+    ...(photoUrl ? { photo: photoUrl } : {}), // Додаємо шлях до фото
+  });
   return contact;
 };
 

@@ -15,6 +15,7 @@ import { updateContactValidationSchema } from '../validation/updateContactValida
 import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/multer.js';
+import { parseBooleanFields } from '../middlewares/parseBooleanFields.js';
 
 const contactsRouter = Router();
 contactsRouter.use('/', authenticate);
@@ -27,6 +28,15 @@ contactsRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
 contactsRouter.post(
   '/',
   upload.single('photo'),
+  (req, res, next) => {
+    console.log('File:', req.file); //  Перевірка файлу
+    console.log('Body:', req.body);
+    if (!req.file) {
+      console.warn(' Файл не був переданий!');
+    }
+    next();
+  },
+  parseBooleanFields,
   validateBody(createContactValidationSchema),
   ctrlWrapper(createContactController),
 );
@@ -34,6 +44,7 @@ contactsRouter.post(
 contactsRouter.patch(
   '/:contactId',
   upload.single('photo'),
+  parseBooleanFields,
   validateBody(updateContactValidationSchema),
   ctrlWrapper(patchContactController),
 );
