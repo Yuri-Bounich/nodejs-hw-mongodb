@@ -1,0 +1,27 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: mongodb
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: <опис вашого додатку>
+tags:
+  - name: contacts
+    description: Operations about users.
+  - name: auth
+    description: Auth operations.
+  # теги, що ви будете використовувати
+servers:
+  - url: http://localhost:3000
+  # - url: #посилання на задеплоєний сайт
+paths:
+  /contacts/{id}:
+    # тут будуть посилання на ендпоінти
+    get:
+      $ref: ../swagger/path/contacts/{id}/get.yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
