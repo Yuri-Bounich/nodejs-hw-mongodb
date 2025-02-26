@@ -5,19 +5,24 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: <опис вашого додатку>
+  description: Contact-list
 tags:
-  - name: contacts
+  - name: Contacts
     description: Operations about users.
-  - name: auth
+  - name: Auth
     description: Auth operations.
   # теги, що ви будете використовувати
 servers:
   - url: http://localhost:3000
   # - url: #посилання на задеплоєний сайт
 paths:
+  # тут будуть посилання на ендпоінти
+  /contacts:
+    get:
+      $ref: ../swagger/path/contacts/get.yaml
+    post:
+      $ref: ../swagger/path/contacts/post.yaml
   /contacts/{id}:
-    # тут будуть посилання на ендпоінти
     get:
       $ref: ../swagger/path/contacts/{id}/get.yaml
 components:

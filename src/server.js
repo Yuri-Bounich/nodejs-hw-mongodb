@@ -7,6 +7,7 @@ import router from './routers/index.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { UPLOADS_DIR_PATH } from './constans/path.js';
+import { swaggerDoc } from './middlewares/swagger.js';
 
 const PORT = Number(getEnvVar('PORT', 3000));
 
@@ -29,6 +30,8 @@ export const setupServer = () => {
       limit: '100kb',
     }),
   );
+
+  app.use('/api-docs', swaggerDoc());
 
   // Статичні файли для папки uploads
   app.use('/uploads', express.static(UPLOADS_DIR_PATH));
