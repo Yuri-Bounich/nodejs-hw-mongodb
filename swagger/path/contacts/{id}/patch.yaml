@@ -15,7 +15,7 @@ parameters:
 requestBody:
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         properties:
@@ -28,10 +28,18 @@ requestBody:
             type: string
             format: email
             example: BS@mail.com
-          phone:
+          phoneNumber:
             description: "Contact's phoneNumber"
             type: string
             example: '+380000000043'
+          isFavourite:
+            description: 'A sign of a favorite contact'
+            type: boolean
+            example: false
+          contactType:
+            description: "Contact's type"
+            type: string
+            enum: ['work', 'home', 'personal']
           photo:
             description: "Link to contact's photo"
             type: string
